@@ -1,0 +1,19 @@
+# TEAM
+    Developer: Daniele Foroni
+    Site: http://disi.unitn.it/~foroni/
+    Twitter: @forons
+    From: Trento, Italy
+
+    Developer: Matteo Lissandrini
+    Site: http://disi.unitn.it/~lissandrini/
+    Twitter: @kuzeko
+    From: Trento, Italy
+
+# THANKS
+
+
+# SITE
+    Last update: 2017/12/13 
+    Standards: HTML5, CSS3
+    Components: Modernizr, jQuery, Materialize
+    IDE: VS Code, Sublime Text, IntelliJ

@@ -1,0 +1,187 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ExCoDE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/normalize.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Quicksand:400,700" rel="stylesheet">
+</head>
+
+<body>
+    <ul id="list-datasets" class="sidenav sidenav-fixed">
+        <li>
+            <h3 class="white-text title center" style="font-weight: bold">ExCoDE</h3>
+        </li>
+        <li>
+            <div class="divider"></div>
+        </li>
+        <li>
+            <span class="subheader center white-text">Select Configuration</span>
+        </li>
+        <li>
+            <div class="center">
+                <a id="btn-new-configuration" class="waves-effect waves-light btn" href="/index">
+                    New Configuration
+                    <i class="material-icons right">add</i>
+                </a>
+            </div>
+            <p class="center">
+                <a href="http://db.disi.unitn.eu/" class="center">
+                    <img class="responsive-img logo" src="{{ url_for('static', filename='img/logo-white.png') }}"  alt="dbTrento logo"/>
+                </a>
+            </p>
+        </li>
+    </ul>
+
+    <div class="row page">
+        <div class="col s10 offset-s2 content">
+            <div class="row">
+                <div class="card col s10 offset-s1" id="task-results">
+                    <div class="card-content">
+                        <div class="container">
+                            <div class="row">
+                                <div class="col s12">
+                                    <h4>Results</h4>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <h5 class="col s6 center-align" style="margin-top: 2rem;">
+                                    <span style="font-weight: bold">Configuration: </span>
+                                    <span id="conf_name">{{ doc['config'] }}</span>
+                                </h5>
+                                <h5 class="col s6 center-align" style="margin-top: 2rem;">
+                                    <span style="font-weight: bold">Dataset: </span>
+                                    <span id="dataset_name">{{ doc['name'] }}</span>
+                                </h5>
+                            </div>
+                            <div class="row">
+                                <h5 class="col s12 center-align" style="margin-top: 2rem; font-weight: bold">
+                                    Summary
+                                </h5>
+                                <div class="col s10 center-align offset-s1" id="general_stats" style="margin-top: 2rem; padding-right: 10px">
+                                </div>
+                            </div>
+                            <div class="row" hidden="true">
+                                <h5 class="col s12 left-align" style="margin-top: 2rem;">
+                                    <span style="font-weight: bold">Dataset Path: </span>
+                                    <span id="dataset_path_name">{{ doc['path_name'] }}</span>
+                                </h5>
+                            </div>
+                            <div id="no-result" hidden="true" class="row" style="margin: 5em;">
+                                <div class="col s12">
+                                    <h5 class="center-align black-text">Sorry, no dense correlated subgraph was found using configuration {{ doc['config'] }}!</h5>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div id="results-card" hidden="true">
+                                    <div class="col s12">
+                                        <h5 class="center-align black-text">Dense Correlated Subgraphs</h5>
+                                    </div>
+                                </div>
+                                <div class="col s12">
+                                    <div class="card subgraph-card col s1" id="more-subgraphs" hidden="true">
+                                        <span class="card-title activator" style="margin-bottom:10px; margin-top:10px;">
+                                            <i class="material-icons">more_horiz</i>
+                                        </span>
+                                        <div class="card-reveal black-text enlarge">
+                                            <span class="card-title shrink"> 
+                                                <i class="material-icons left">close</i>
+                                            </span>
+                                            <h5> Dense Subgraph Components </h5>
+                                            <div class="card-content" id="subgraph-summary">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button id="btn-subgraph-exploration" class="btn-large submit col s6 offset-s2" style="margin-top: 10px; display: none;" type="button" disabled>
+                                        Examine Subgraph
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div id="explore_subgraph" hidden="true">
+                                    <div class="col s12">
+                                        <h5 class="center-align black-text">Exploded View</h5>
+                                    </div>
+                                    <div class="col s12">
+                                        <ul class="tabs z-depth-1" id="snaps_tabs">
+                                        </ul>
+                                    </div>
+                                    <div class="col s12" id="snaps_graphs">
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="no-explode-result" hidden="true" class="row" style="margin: 5em;">
+                                <div class="col s12">
+                                    <h5 class="center-align black-text">Sorry, no exploded view can be created using the subgraph selected!</h5>
+                                </div>
+                            </div>
+                            <div id="loading-results" hidden="true" class="row" style="margin: 5em;">
+                                <div class="row">
+                                    <div class="col s12">
+                                        <h3 class="black-text">Please Wait...</h3>
+                                        <h7 class="black-text">We are preparing your results...</h7>
+                                    </div>
+                                </div>
+                                <div class="preloader-wrapper big active">
+                                    <div class="spinner-layer spinner-blue">
+                                        <div class="circle-clipper left">
+                                            <div class="circle"></div>
+                                        </div><div class="gap-patch">
+                                            <div class="circle"></div>
+                                        </div><div class="circle-clipper right">
+                                            <div class="circle"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="spinner-layer spinner-red">
+                                        <div class="circle-clipper left">
+                                            <div class="circle"></div>
+                                        </div><div class="gap-patch">
+                                            <div class="circle"></div>
+                                        </div><div class="circle-clipper right">
+                                            <div class="circle"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="spinner-layer spinner-yellow">
+                                        <div class="circle-clipper left">
+                                            <div class="circle"></div>
+                                        </div><div class="gap-patch">
+                                            <div class="circle"></div>
+                                        </div><div class="circle-clipper right">
+                                            <div class="circle"></div>
+                                        </div>
+                                    </div>
+
+                                    <div class="spinner-layer spinner-green">
+                                        <div class="circle-clipper left">
+                                            <div class="circle"></div>
+                                        </div><div class="gap-patch">
+                                            <div class="circle"></div>
+                                        </div><div class="circle-clipper right">
+                                            <div class="circle"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/vendor/materialize.min.js') }}"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/shared.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/results.js') }}"></script>
+</body>
+</html>

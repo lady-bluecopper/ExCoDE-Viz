@@ -1,0 +1,301 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ExCoDE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Quicksand:400,700" rel="stylesheet">
+</head>
+
+<body>
+    <ul id="list-datasets" class="sidenav sidenav-fixed">
+        <li>
+            <h3 class="white-text title center" style="font-weight: bold">ExCoDE</h3>
+        </li>
+        <li>
+            <div class="divider"></div>
+        </li>
+        <li>
+            <span class="subheader center white-text">Select Configuration</span>
+        </li>
+        <li>
+            <div class="center">
+                <a id="btn-new-configuration" class="waves-effect waves-light btn" href="/index">
+                    New Configuration
+                    <i class="material-icons right">add</i>
+                </a>
+            </div>
+            <p class="center">
+                <a href="http://db.disi.unitn.eu/" class="center">
+                    <img class="responsive-img logo" src="{{ url_for('static', filename='img/logo-white.png') }}"  alt="dbTrento logo"/>
+                </a>
+            </p>
+        </li>
+    </ul>
+
+    <div class="row page">
+        <div class="col s10 offset-s2 content">
+            <div class="row">
+                <div class="card col s10 offset-s1" id="dataset-add">
+                    <div class="card-content">
+                        <!--  target="_blank" -->
+                        <form id="dataset-select" method="post" action="/results" enctype="multipart/form-data" autocomplete="off" class="container">
+                            <div class="row">
+                                <div class="col s12">
+                                    <h4>Configuration</h4>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <h5 class="col s2 left-align" style="margin-top: 2rem; font-weight: bold;">Config</h5>
+                                <p class="col s2 right-align" style="margin-top: 2rem;">Name:</p>
+                                <div class="input-field col s8">
+                                    <input id="config-dd" type="text" name="config" value="{{ config_value }}"/>
+                                </div>
+                                <span class="col s8 offset-s4 red-text" id="config-error" hidden="true">This field is required.</span>
+                            </div>
+                            <div class="row">
+                                <h5 class="col s2 left-align" style="margin-top: 2rem; font-weight: bold;">Dataset</h5>
+                                <p class="col s2 right-align" style="margin-top: 2rem;">Name:</p>
+                                <div class="input-field col s8">
+                                    <input id="dataset-dd" type="text" name="dataset" value="{{ dataset_value }}"/>
+                                </div>
+                                <div class="col s8 offset-s4 red-text" id="dataset-error" hidden="true">This field is required.</div>
+                                <p class="col s2 offset-s2 right-align" style="margin-top: 2rem;">Path:</p>
+                                <div class="col s8" style="margin-top: 2rem;">
+                                    <label class="col s6">
+                                        <input class="with-gap" name="fileGroup" type="radio" id="local" value="local"/><span>Local</span>
+                                    </label>
+                                    <label class="col s6">
+                                        <input class="with-gap" name="fileGroup" checked type="radio" id="remote" value="remote"/><span>Remote</span>
+                                    </label>
+                                </div>
+                                <div id="local-field" hidden="true"> 
+                                    <div class="input-field file-field col s7 offset-s4">
+                                        <div class="btn" id="dataset-button">
+                                            <span>Upload</span>
+                                            <input type="file" multiple="" name="file[]">
+                                        </div>
+                                        <div class="file-path-wrapper">
+                                            <input class="file-path validate" type="text" id="path-dd-local" name="path_local">
+                                        </div>
+                                    </div>
+                                    <div class="col s1" style="margin-top: 2rem;">
+                                        <span class="tooltipped" data-position="right" data-tooltip="Select the data file and, optionally, the mapping file with the node labels. The filename of the mapping must be: <i>&ltdata_filename&gt_mapping</i>">
+                                            <i class="material-icons help" style="vertical-align: bottom;">help_outline</i>
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="input-field col s8 offset-s4" id="remote-field">
+                                    <select id="dataset-list" name="path_remote">
+                                        {% if dataset_selected == 'nop' %}
+                                            <option disabled selected id="nop">Choose a dataset</option>
+                                        {% else %}
+                                            <option disabled id="nop">Choose a dataset</option>
+                                        {% endif %}
+                                        {% for opt in options %}
+                                            {% if dataset_selected == opt %} 
+                                                <option selected value="{{ opt }}" id="dataset-{{ opt }}">{{ opt }}</option> 
+                                            {% else %}
+                                                <option value="{{ opt }}" id="dataset-{{ opt }}">{{ opt }}</option>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col s8 offset-s4 red-text" id="path-error" hidden="true">This field is required.</div>
+                            </div>
+                            <div class="card-action custom row">
+                                <button id="btn-dataset-select" class="btn-large submit" style="margin: 2em;" type="button">
+                                    Load
+                                </button>
+                            </div>
+                            <div id="loading-dataset" hidden="true" class="row" style="margin: 5em;">
+                                <div class="progress loading">
+                                    <div class="indeterminate"></div>
+                                </div>
+                            </div>
+                            <div id="dataset-load" class="row" hidden="true">
+                                <div class="row">
+                                    <div class="col s12">
+                                        <h4>Statistics</h4>
+                                    </div>
+                                </div>
+                                <div class="row" id="tables">
+                                    <div class="col s6" >
+                                        <p> General Statistics </p>
+                                    </div>
+                                    <div class="col s6">
+                                        <p> Statistics per Snapshot </p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col s6" id="general_stats">
+                                    </div>
+                                    <div class="col s6" id="snap_stats">
+                                    </div>
+                                </div>
+                                <div class="row" id="line-charts">
+                                    <div class="col s6">
+                                        <p> Min, Avg, Max Degree per Snapshot </p>
+                                    </div>
+                                    <div class="col s6">
+                                        <p> Number of Edges per Snapshot </p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col s6" id="degrees-multi">
+                                    </div>
+                                    <div class="col s6" id="num_edges">
+                                    </div>
+                                </div>
+                                <div class="row" id="bar-charts">
+                                    <div class="col s6">
+                                        <p> Number of Nodes per Degree </p>
+                                    </div>
+                                    <div class="col s6">
+                                        <p> Number of Edges per Existence Count </p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col s6" id="degrees">
+                                    </div>
+                                    <div class="col s6" id="num_snap">
+                                    </div>
+                                </div>
+                                <div class="row divider"></div>
+                            </div>
+                            <div class="row">
+                                <h5 class="col s3 left-align" style="margin-top: 2rem; font-weight: bold;">Parameters</h5>
+                                <div class="card config-card col s12">
+                                    <div class="card-content">
+                                        <div class="collection">
+                                            <div class="collection-item">
+                                                <p class="col s7">
+                                                    <span class="tooltipped" data-position="left" data-tooltip="Minimum correlation desired for a pair of edges.">
+                                                        <i class="material-icons help" style="vertical-align: bottom;">help_outline</i>
+                                                    </span>
+                                                    Correlation Threshold: <span class="child-subtext" id="cor">0.5</span>
+                                                </p>
+                                                <p class="range-field col s5">
+                                                    <input type="range" name=correlation id="correlationSlider" min="0" max="1" value="{{ correlation_value }}" step="0.01"/>
+                                                </p>
+                                            </div>
+                                            <div class="collection-item">
+                                                <p class="col s7">
+                                                    <span class="tooltipped" data-position="left" data-tooltip="How the density of a group of dynamic edges is computed.">
+                                                        <i class="material-icons help" style="vertical-align: bottom;">help_outline</i>
+                                                    </span>
+                                                    Density Function:
+                                                </p>
+                                                <p class="col s5">
+                                                    <label>
+                                                        {% if average_checked %}
+                                                        <input class="with-gap" name="densityGroup" checked type="radio"  id="average" value="Average"/><span class="child-subtext">Average</span>
+                                                        {% else %}
+                                                        <input class="with-gap" name="densityGroup" type="radio"  id="average" value="Average"/><span class="child-subtext">Average</span>
+                                                        {% endif %}
+                                                    </label>
+                                                </p>
+                                                <p class="col s5 offset-s7">
+                                                    <label>
+                                                        {% if minimum_checked %}
+                                                        <input class="with-gap" name="densityGroup" checked type="radio"  id="minimum" value="Minimum"/><span class="child-subtext">Minimum</span>
+                                                        {% else %}
+                                                        <input class="with-gap" name="densityGroup" type="radio"  id="minimum" value="Minimum"/><span class="child-subtext">Minimum</span>
+                                                        {% endif %}
+                                                    </label>
+                                                </p>
+                                            </div>
+                                            <div class="collection-item">
+                                                <p class="col s7">
+                                                    <span class="tooltipped" data-position="left" data-tooltip="Minimum density desired for a group of edges.">
+                                                        <i class="material-icons help" style="vertical-align: bottom;">help_outline</i>
+                                                    </span>
+                                                    Density Threshold: <span class="child-subtext" id="den">1</span>
+                                                </p>
+                                                <p class="range-field col s5">
+                                                      <input type="range" id="densitySlider" name="density" min="1" max="100" value="{{ density_value }}" step="0.01"/>
+                                                </p>
+                                            </div>
+                                            <div class="collection-item">
+                                                <p class="col s7">
+                                                    <span class="tooltipped" data-position="left" data-tooltip="A group of edges is considered active when at least this percentage of its edges exist.">
+                                                        <i class="material-icons help" style="vertical-align: bottom;">help_outline</i>
+                                                    </span>
+                                                    Existing Edge Threshold: <span class="child-subtext" id="snap">1</span>
+                                                </p>
+                                                <p class="range-field col s5">
+                                                    <input type="range" id="snapSlider" name="edgesxsnaps" min="0" max="100" value="{{ edgesxsnaps_value }}" step="1"/>
+                                                </p>
+                                            </div>
+                                            <div class="collection-item">
+                                                <p class="col s7">
+                                                    <span class="tooltipped" data-position="left" data-tooltip="Desired upperbound on the size of the groups extracted.">
+                                                        <i class="material-icons help" style="vertical-align: bottom;">help_outline</i>
+                                                    </span>
+                                                    Size Threshold: <span class="child-subtext" id="size">10000</span>
+                                                </p>
+                                                <p class="range-field col s5">
+                                                    <input type="range" id="sizeSlider" name="sizeRange" min="1" max="1000" value="{{ size_range_value }}" step="1"/>
+                                                </p>
+                                                <p class="col s5 offset-s7">
+                                                    <label>
+                                                        {% if size_checked %}
+                                                        <input class="with-gap" name="SizeButton" checked type="radio" value="10000" id="sizeButton"/><span>Unbounded Size</span>
+                                                        {% else %}
+                                                        <input class="with-gap" name="SizeButton" type="radio" value="10000" id="sizeButton"/><span>Unbounded Size</span>
+                                                        {% endif %}
+                                                    </label>
+                                                </p>
+                                            </div>
+                                            <div class="collection-item">
+                                                <p class="col s7">
+                                                    <span class="tooltipped" data-position="left" data-tooltip="Desired upperbound on the pairwise similarity between the groups extracted.">
+                                                        <i class="material-icons help" style="vertical-align: bottom;">help_outline</i>
+                                                    </span>
+                                                    Similarity Threshold: <span class="child-subtext" id="sim">1</span>
+                                                </p>
+                                                <p class="range-field col s5">
+                                                    <input type="range" id="simSlider" name="epsilon" min="0" max="1" value="{{ epsilon_value }}" step="0.01"/>
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-action custom row">
+                                        <div class="col s3 offset-s3">
+                                            <button id="btn-save-configuration" class="btn-large submit" type="submit" name="action" disabled>
+                                                Save
+                                            </button>
+                                        </div>
+                                        <div class="col s3">
+                                            <button id="btn-execute-configuration" class="btn-large submit" type="submit" name="action" disabled>
+                                                Execute
+                                            </button>
+                                        </div>
+                                        <div class="col s1 offset-s1" id="loadFirst">
+                                            <p class="tooltipped" data-position="top" data-tooltip="Please load a dataset first."><i class="material-icons help">help_outline</i></p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/vendor/materialize.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/vendor/jquery.validate.min.js') }}"></script>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script src="{{ url_for('static', filename='js/statistics.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/shared.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

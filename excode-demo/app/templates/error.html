@@ -1,0 +1,48 @@
+<!doctype html>
+<html class="no-js" lang="">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>ExCoDE</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/materialize.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Quicksand:400,700" rel="stylesheet">
+</head>
+
+<body>
+    <ul id="list-datasets" class="sidenav sidenav-fixed">
+        <li>
+            <h3 class="white-text title center" style="font-weight: bold">ExCoDE</h3>
+        </li>
+        <li>
+            <div class="divider"></div>
+        </li>
+        <li>
+            <div class="center">
+            </div>
+            <p class="center">
+                <a href="http://db.disi.unitn.eu/" class="center">
+                     <img class="responsive-img logo" src="{{ url_for('static', filename='img/logo-white.png') }}"  alt="dbTrento logo"/>
+                </a>
+            </p>
+        </li>
+    </ul>
+    <div class="row page">
+        <div class="col s10 offset-s2 content valign-wrapper">
+            <div class="card col s10 offset-s1">
+                <div class="card-content">
+                    <h1>{{ doc['title'] }}</h1>
+                    <h4>{{ doc['header'] }}</h4>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/vendor/materialize.min.js') }}"></script>
+</body>
+</html>
