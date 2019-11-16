@@ -4,7 +4,20 @@
 ExCoDE is a general framework to mine diverse dense correlated subgraphs from dynamic networks. The correlation of a subgraph is computed in terms of the minimum pairwise Pearson correlation between its edges. The density of a subgraph is computed either as the minimum average degree among the snapshots of the networks where the subgraph is active, or as the average average degree among the snapshots of the networks where the subgraph is active. The similarity between different subgraphs is measured as the Jaccard similarity between the corresponding sets of edges.
 
 ## Usage
-The framework can be tested at the following link: https://db.disi.unitn.eu/excode.
+The framework can be tested either at the following link: https://db.disi.unitn.eu/excode, or by using the code provided in the folder *excode-demo*. 
+
+### Using the Code
+
+    1. Install the following requirements:
+
+        Java JRE v1.8.0
+        Python 3.6.0
+        Maven 3.6.0
+        Docker 2.1.0.4
+
+    2. Run the script *run.sh*
+    3. In a new window, run *run-java.sh*
+    4. Go to *http://0.0.0.0:80/*
 
 ## Examples
 
