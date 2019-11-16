@@ -8,16 +8,16 @@ The framework can be tested either at the following link: https://db.disi.unitn.
 
 ### Using the Code
 
-    1. Install the following requirements:
+Install the following requirements:
 
         Java JRE v1.8.0
         Python 3.6.0
         Maven 3.6.0
         Docker 2.1.0.4
 
-    2. Run the script *run.sh*
-    3. In a new window, run *run-java.sh*
-    4. Go to *http://0.0.0.0:80/*
+1. Run the script *run.sh*
+2. In a new window, run *run-java.sh*
+3. Go to *http://0.0.0.0:80/*
 
 ## Examples
 
